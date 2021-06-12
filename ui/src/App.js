@@ -2,7 +2,7 @@ import './App.css';
 import Navigation from './Navigation';
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 import Create from './Create';
-import Listings from './Listings';
+import Products from './Products';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <Router>
           <Navigation></Navigation>
           <Switch>
-            <Route exact path="/" component={Listings} />
+            <Route exact path="/" component={Products} />
             <Route path="/create" component={Create} />
           </Switch>
       </Router>

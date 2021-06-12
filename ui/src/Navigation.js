@@ -1,7 +1,8 @@
 import './Navigation.css';
-import { NavLink, Router} from 'react-router-dom'
+import { NavLink} from 'react-router-dom'
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
+import Button from 'react-bootstrap/Button'
 
 function Navigation() {
   return (
@@ -10,9 +11,13 @@ function Navigation() {
             <Navbar.Brand>Highlands</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="ml-auto">
-                    <NavLink className="nav-link" exact activeClassName="active" to="/">Listings</NavLink>
-                    <NavLink className="nav-link" exact activeClassName="active" to="/create">Create</NavLink>
+                <Nav className="ml-auto align-items-center">
+                    <NavLink className="nav-link" exact activeClassName="active" to="/">Products</NavLink>
+                      <NavLink className="nav-link" exact activeClassName="active" to="/create">
+                        <Button variant="success">
+                          + Create New
+                        </Button>
+                      </NavLink>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
