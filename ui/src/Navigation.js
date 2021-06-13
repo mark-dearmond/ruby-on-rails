@@ -8,16 +8,20 @@ function Navigation() {
   return (
     <div>
         <Navbar bg="light" expand="lg" className="mb-5">
-            <Navbar.Brand>Highlands</Navbar.Brand>
+            <NavLink className="nav-link" exact activeClassName="active" to="/">
+              <Navbar.Brand>
+                Ruby on Rails
+              </Navbar.Brand>
+            </NavLink>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto align-items-center">
                     <NavLink className="nav-link" exact activeClassName="active" to="/">Products</NavLink>
-                      <NavLink className="nav-link" exact activeClassName="active" to="/create">
-                        <Button variant="success">
-                          + Create New
-                        </Button>
-                      </NavLink>
+                    <NavLink className="nav-link" exact activeClassName="active" to="/create">
+                      <Button variant="success">
+                        + New Product
+                      </Button>
+                    </NavLink>
                 </Nav>
             </Navbar.Collapse>
         </Navbar>
