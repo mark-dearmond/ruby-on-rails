@@ -1,3 +1,4 @@
+import "react-datepicker/dist/react-datepicker.css";
 import React, { useState } from 'react';
 import './Create.css';
 import Container from 'react-bootstrap/Container'
@@ -7,12 +8,17 @@ import Card from 'react-bootstrap/Card'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
-import { NavLink} from 'react-router-dom'
+import { Link} from 'react-router-dom'
+import DatePicker from "react-datepicker";
 
 function Create() {
   
+  const today = new Date()
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
   const [validated, setValidated] = useState(false);
-  const [form, setForm] = useState({productProps: [{name: null, value: null}]})
+  const [form, setForm] = useState({productProps: [{name: null, value: null}], availableOnDate: tomorrow})
 
   const setField = (field, value, i) => {
     if(i >= 0) {
@@ -26,16 +32,13 @@ function Create() {
 
   const handleSubmit = (event) => {
     const formEl = event.currentTarget;
-    if (formEl.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    } else {
-      event.preventDefault();
-      event.stopPropagation();
-      // make call to api
-    }
-    console.log(form)
+    event.preventDefault();
+    event.stopPropagation();
     setValidated(true);
+    if (formEl.checkValidity() !== false) {
+      setForm({productProps: [{name: null, value: null}], availableOnDate: tomorrow})
+      setValidated(false);
+    } 
   };
 
   const handleAddProperty = () => {
@@ -64,21 +67,22 @@ function Create() {
                   <Card.Title>Product Info</Card.Title>
                   <Form.Group controlId="name">
                     <Form.Label>Name</Form.Label>
-                    <Form.Control onChange={ e => setField('name', e.target.value) } required type="text"/>
+                    <Form.Control value={form.name ? form.name : ''} onChange={ e => setField('name', e.target.value) } required type="text"/>
                     <Form.Control.Feedback type="invalid">
                       Please provide a name
                     </Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group controlId="upc">
                     <Form.Label>UPC</Form.Label>
-                    <Form.Control onChange={ e => setField('upc', e.target.value) }  required type="text"/>
+                    <Form.Control value={form.upc ? form.upc : ''} onChange={ e => setField('upc', e.target.value) }  required type="text"/>
                     <Form.Control.Feedback type="invalid">
                       Please provide a UPC
                     </Form.Control.Feedback>
                   </Form.Group>
-                  <Form.Group controlId="date">
+                  <Form.Group controlId="availableOnDate">
                     <Form.Label>Available On</Form.Label>
-                    <Form.Control onChange={ e => setField('date', e.target.value) }  required type="text"/>
+                    <DatePicker value={form.availableOnDate ? form.availableOnDate : tomorrow} minDate={tomorrow} className="form-control" required selected={form.availableOnDate} onChange={ date => setField('availableOnDate', date) } />
+                    {/* <Form.Control onChange={ e => setField('date', e.target.value) }  required type="text"/> */}
                     <Form.Control.Feedback type="invalid">
                       Please provide a date
                     </Form.Control.Feedback>
@@ -97,13 +101,13 @@ function Create() {
                     {form.productProps.map((prop, i)=>(
                       <tr key={i}>
                         <td>
-                          <Form.Control onChange={ e => setField('name', e.target.value, i) }  required type="text"/>
+                          <Form.Control value={form.productProps[i]['name'] ? form.productProps[i]['name'] : ''} onChange={ e => setField('name', e.target.value, i) }  required type="text"/>
                           <Form.Control.Feedback type="invalid">
                             Please provide a property name
                           </Form.Control.Feedback>
                         </td>
                         <td>
-                          <Form.Control onChange={ e => setField('value', e.target.value, i) }  required type="text"/>
+                          <Form.Control value={form.productProps[i]['value'] ? form.productProps[i]['value'] : ''} onChange={ e => setField('value', e.target.value, i) }  required type="text"/>
                           <Form.Control.Feedback type="invalid">
                             Please provide a property value
                           </Form.Control.Feedback>
@@ -126,11 +130,11 @@ function Create() {
         </Row>
         <Row>
           <Col className="d-flex justify-content-end">
-            <NavLink className="nav-link" exact activeClassName="active" to="/">
+            <Link exact activeClassName="active" to="/">
               <Button variant="default">
                 Cancel
               </Button>
-            </NavLink>
+            </Link>
             <Button variant="primary" type="submit">
               Create Product
             </Button>
