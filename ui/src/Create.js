@@ -121,7 +121,7 @@ function Create() {
                       ))}
                     </tbody>
                   </Table>
-                  <Button variant="success" onClick={handleAddProperty}>
+                  <Button variant="default" className="text-success" onClick={handleAddProperty}>
                     + Add Property
                   </Button>
               </Card.Body>
