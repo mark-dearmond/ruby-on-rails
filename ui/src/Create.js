@@ -57,12 +57,21 @@ function Create() {
               setLoading(false)
               setAlert({show: true, variant: 'success', message: 'Product created successfully!'})
             })
-            .catch(err => setAlert({show: true, variant: 'danger', message: err}))
+            .catch(err => {
+              setAlert({show: true, variant: 'danger', message: 'Product properties not created'})
+              setLoading(false)
+            })
           })
-          .catch(err => setAlert({show: true, variant: 'danger', message: err}))
+          .catch(err => {
+            setAlert({show: true, variant: 'danger', message: 'Properties not created'})
+            setLoading(false)
+          })
         })
       })
-      .catch(err => setAlert({show: true, variant: 'danger', message: err}))
+      .catch(err => {
+        setAlert({show: true, variant: 'danger', message: 'Product not created'})
+        setLoading(false)
+    })
       setValidated(false);
     } 
   };
