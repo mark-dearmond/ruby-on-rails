@@ -1,9 +1,9 @@
-class ProductsController < ApplicationController
+class Api::V1::ProductsController < ApplicationController
   before_action :set_product, only: [:show, :update, :destroy]
 
   # GET /products
   def index
-    @products = Product.all
+    @products = Product.search(params[:search])
 
     render json: @products
   end
@@ -15,10 +15,10 @@ class ProductsController < ApplicationController
 
   # POST /products
   def create
-    @product = Product.new(product_params)
+    @product = Product.where(product_params).first_or_create(product_params)
 
     if @product.save
-      render json: @product, status: :created, location: @product
+      render json: @product, status: :created, api_v1_product_url: @product
     else
       render json: @product.errors, status: :unprocessable_entity
     end

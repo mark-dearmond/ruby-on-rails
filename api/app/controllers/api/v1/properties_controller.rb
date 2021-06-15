@@ -1,4 +1,4 @@
-class PropertiesController < ApplicationController
+class Api::V1::PropertiesController < ApplicationController
   before_action :set_property, only: [:show, :update, :destroy]
 
   # GET /properties
@@ -15,10 +15,10 @@ class PropertiesController < ApplicationController
 
   # POST /properties
   def create
-    @property = Property.new(property_params)
+    @property = Property.where(property_params).first_or_create(property_params)
 
     if @property.save
-      render json: @property, status: :created, location: @property
+      render json: @property, status: :created, api_v1_property_url: @property
     else
       render json: @property.errors, status: :unprocessable_entity
     end
