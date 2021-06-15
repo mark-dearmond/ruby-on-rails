@@ -10,6 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2021_06_15_184457) do
 
+  create_table "product_properties", force: :cascade do |t|
+    t.string "value"
+    t.integer "product_id", null: false
+    t.integer "property_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["product_id"], name: "index_product_properties_on_product_id"
+    t.index ["property_id"], name: "index_product_properties_on_property_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "name"
+    t.string "upc"
+    t.string "available_on"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "properties", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  add_foreign_key "product_properties", "products"
+  add_foreign_key "product_properties", "properties"
 end
