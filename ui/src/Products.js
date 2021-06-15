@@ -1,13 +1,47 @@
+import React, { useState, useEffect } from 'react';
 import './Products.css';
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Card from 'react-bootstrap/Card'
-import Table from 'react-bootstrap/Table'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import axios from 'axios';
+import Product from './Product';
+import Search from './Search';
 
 function Products() {
+
+  const [products, setProducts] = useState([])
+  const [query, setQuery] = useState('')
+  
+  useEffect(() => {
+    axios.get('/api/v1/products')
+    .then(res => {
+      setProducts(res.data);
+    })
+    .catch(err => console.log(err))
+  }, [])
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if(query !== '') {
+      axios.get(`/api/v1/products?search=${query}`)
+      .then(res => {
+        setProducts(res.data);
+      })
+      .catch(err => console.log(err))
+    } else {
+      axios.get('/api/v1/products')
+      .then(res => {
+        setProducts(res.data);
+      })
+      .catch(err => console.log(err))
+    }
+  }
+
+  const handleChange = e => {
+    setQuery(e);
+  }
+
   return (
     <Container>
       <Row className="mb-2">
@@ -17,50 +51,15 @@ function Products() {
       </Row>
       <Row className="mb-4">
         <Col>
-        <Form>
-          <Form.Row className="align-items-center">
-            <Col>
-              <Form.Label htmlFor="search" srOnly>
-                Name
-              </Form.Label>
-              <Form.Control id="search"/>
-            </Col>
-            <Col xs="auto">
-              <Button type="submit">
-                Search
-              </Button>
-            </Col>
-          </Form.Row>
-        </Form>
+          <Search handleSubmit={handleSubmit} handleChange={handleChange}></Search>
         </Col>
       </Row>
       <Row>
-        <Col xs md="4" className="mb-4">
-          <Card>
-            <Card.Body>
-              <Card.Title>Property</Card.Title>
-              <strong>UPC</strong>
-              <p>123456789</p>
-              <strong>Available On</strong>
-              <p>12/18/2022</p>
-              <Card.Title>Properties</Card.Title>
-              <Table striped bordered>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Color</td>
-                      <td>Green</td>
-                    </tr>
-                  </tbody>
-                </Table>
-            </Card.Body>
-          </Card>
-        </Col>
+        {products.map(product => (
+          <Col xs md="4" className="mb-4" key={product.id}>
+            <Product productId={product.id} attributes={product}></Product>
+          </Col>
+        ))}
       </Row>
     </Container>
   );
