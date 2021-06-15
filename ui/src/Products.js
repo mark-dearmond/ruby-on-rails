@@ -24,7 +24,7 @@ function Products() {
     event.preventDefault();
     event.stopPropagation();
     if(query !== '') {
-      axios.get(`/api/v1/products?search=${query}`)
+      axios.get(`/api/v1/products?search=${query.toLowerCase()}`)
       .then(res => {
         setProducts(res.data);
       })

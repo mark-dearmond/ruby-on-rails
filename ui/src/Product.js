@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card'
 import Table from 'react-bootstrap/Table'
 import axios from 'axios';
 import Moment from 'react-moment';
+import TitleCase from 'react-title-case';
 
 function Product(props) {
 
@@ -23,7 +24,9 @@ function Product(props) {
   return (
     <Card>
       <Card.Body>
-        <Card.Title>{props.attributes.name}</Card.Title>
+        <Card.Title>
+          <TitleCase string={props.attributes.name} />
+        </Card.Title>
         <strong>UPC</strong>
         <p>{props.attributes.upc}</p>
         <strong>Available On</strong>
@@ -41,8 +44,8 @@ function Product(props) {
             <tbody>
               {properties.map(property => (
                 <tr key={property.id}>
-                  <td>{property.name}</td>
-                  <td>{property.value}</td>
+                  <td><TitleCase string={property.name}/></td>
+                  <td><TitleCase string={property.value} /></td>
                 </tr>
               ))}
             </tbody>

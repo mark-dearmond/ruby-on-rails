@@ -10,14 +10,19 @@ import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import { Link} from 'react-router-dom'
 import DatePicker from "react-datepicker";
+import axios from "axios";
+import Alert from 'react-bootstrap/Alert'
 
 function Create() {
   
   const today = new Date()
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
+  const regex = /^[0-9\b]+$/;
 
   const [validated, setValidated] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({show: false, variant: '', message: ''});
   const [form, setForm] = useState({productProps: [{name: null, value: null}], availableOnDate: tomorrow})
 
   const setField = (field, value, i) => {
@@ -25,6 +30,10 @@ function Create() {
       const productProps = [...form.productProps];
       productProps[i][field] = value;
       setForm({...form, productProps})
+    } else if(field === 'upc') {  
+      if(value === '' || regex.test(value)) {
+        setForm({...form, [field]: value})
+      }
     } else {
       setForm({...form, [field]: value})
     }
@@ -36,7 +45,24 @@ function Create() {
     event.stopPropagation();
     setValidated(true);
     if (formEl.checkValidity() !== false) {
-      setForm({productProps: [{name: null, value: null}], availableOnDate: tomorrow})
+      setLoading(true)
+      axios.post('/api/v1/products', {name: form.name.toLowerCase(), upc: form.upc, available_on: form.availableOnDate})
+      .then(product => {
+        form.productProps.map(newProperty => {
+          axios.post('/api/v1/properties', {name: newProperty.name.toLowerCase()})
+          .then(property => {
+            axios.post('/api/v1/product_properties', {value: newProperty.value, product_id: product.data.id, property_id: property.data.id})
+            .then(res => {
+              setForm({productProps: [{name: null, value: null}], availableOnDate: tomorrow})
+              setLoading(false)
+              setAlert({show: true, variant: 'success', message: 'Product created successfully!'})
+            })
+            .catch(err => setAlert({show: true, variant: 'danger', message: err}))
+          })
+          .catch(err => setAlert({show: true, variant: 'danger', message: err}))
+        })
+      })
+      .catch(err => setAlert({show: true, variant: 'danger', message: err}))
       setValidated(false);
     } 
   };
@@ -54,6 +80,11 @@ function Create() {
 
   return (
     <Container>
+      {alert.show && 
+        <Alert variant={alert.variant} onClose={() => setAlert({show: false})} dismissible>
+          {alert.message}
+      </Alert>
+      }
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Row className="mb-2">
           <Col>
@@ -130,13 +161,14 @@ function Create() {
         </Row>
         <Row>
           <Col className="d-flex justify-content-end">
-            <Link exact activeClassName="active" to="/">
+            <Link to="/">
               <Button variant="default">
                 Cancel
               </Button>
             </Link>
             <Button variant="primary" type="submit">
-              Create Product
+              { loading && 'Loading' }
+              { !loading && 'Create Product' }
             </Button>
           </Col>
         </Row>
